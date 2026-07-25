@@ -1,0 +1,36 @@
+services:
+  app1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app1
+    ports:
+      - "8181:8000"
+    environment:
+      - SERVER_NAME=python-service-1
+    restart: unless-stopped
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app2
+    ports:
+      - "8182:8000"
+    environment:
+      - SERVER_NAME=python-service-2
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-loadbalancer
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - app1
+      - app2
+    restart: unless-stopped
