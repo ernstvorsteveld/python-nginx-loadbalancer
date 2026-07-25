@@ -8,6 +8,8 @@ services:
       - "${APP1_PORT}:8000"
     environment:
       - SERVER_NAME=${APP1_SERVER_NAME}
+      - FAIL_MIN=${FAIL_MIN}
+      - FAIL_MAX=${FAIL_MAX}
     restart: unless-stopped
 
   app2:
@@ -19,6 +21,8 @@ services:
       - "${APP2_PORT}:8000"
     environment:
       - SERVER_NAME=${APP2_SERVER_NAME}
+      - FAIL_MIN=${FAIL_MIN}
+      - FAIL_MAX=${FAIL_MAX}
     restart: unless-stopped
 
   nginx:
