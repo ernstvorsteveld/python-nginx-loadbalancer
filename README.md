@@ -2,6 +2,17 @@
 
 A simple FastAPI health check service built with `uv`, packaged with Docker, and load-balanced via NGINX with custom header forwarding and randomized failure targets.
 
+## Directory Structure
+
+- `python/`: Python application directory.
+  - [python/main.py](file:///Users/ernstvorsteveld/git/python/python-nginx-loadbalancer/python/main.py): FastAPI service with `/health` endpoint.
+  - [python/Dockerfile](file:///Users/ernstvorsteveld/git/python/python-nginx-loadbalancer/python/Dockerfile): Multi-stage Docker setup using `uv`.
+  - [python/pyproject.toml](file:///Users/ernstvorsteveld/git/python/python-nginx-loadbalancer/python/pyproject.toml) & `uv.lock`: Dependency definitions.
+- `nginx/`: NGINX configuration directory.
+  - [nginx/nginx.conf.template](file:///Users/ernstvorsteveld/git/python/python-nginx-loadbalancer/nginx/nginx.conf.template): NGINX configuration template.
+- `docker-compose.yml`: Docker Compose configuration.
+- `.env`: Environment variables.
+
 ## Environment Variables (`.env`)
 
 ```env
@@ -27,7 +38,7 @@ FAIL_MAX=7
 - **HTTP Status Code**: Always returns `200 OK`.
 - On every request, a `target_failure_count` is generated (`random.randint(FAIL_MIN, FAIL_MAX)`).
 - If `request_count == target_failure_count`, `status` returns `false` and `request_count` resets to 0.
-- If `request_count` reaches `FAIL_MAX` (upper bound) without matching `target_failure_count`, `request_count` re-initializes (resets) to 0.
+- If `request_count` reaches `FAIL_MAX` (upper bound), `request_count` resets to 0.
 - `total_request_count` monotonically increments across all requests.
 
 Example Response:
