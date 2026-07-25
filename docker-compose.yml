@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
     container_name: app1
     ports:
-      - "8181:8000"
+      - "${APP1_PORT}:8000"
     environment:
-      - SERVER_NAME=python-service-1
+      - SERVER_NAME=${APP1_SERVER_NAME}
     restart: unless-stopped
 
   app2:
@@ -16,18 +16,21 @@ services:
       dockerfile: Dockerfile
     container_name: app2
     ports:
-      - "8182:8000"
+      - "${APP2_PORT}:8000"
     environment:
-      - SERVER_NAME=python-service-2
+      - SERVER_NAME=${APP2_SERVER_NAME}
     restart: unless-stopped
 
   nginx:
     image: nginx:alpine
     container_name: nginx-loadbalancer
     ports:
-      - "8080:80"
+      - "${NGINX_PORT}:80"
+    environment:
+      - USER_TOKEN_1=${USER_TOKEN_1}
+      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:

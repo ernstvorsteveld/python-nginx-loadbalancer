@@ -1,7 +1,8 @@
 import os
 import threading
+from typing import Annotated
 
-from fastapi import FastAPI, Response, status
+from fastapi import FastAPI, Header, Response, status
 
 app = FastAPI(title="Health Check Service")
 
@@ -11,7 +12,10 @@ server_name = os.getenv("SERVER_NAME", "default-server")
 
 
 @app.get("/health")
-def health_check(response: Response):
+def health_check(
+    response: Response,
+    x_user_token: Annotated[str | None, Header()] = None,
+):
     global request_counter
     with counter_lock:
         request_counter += 1
@@ -24,12 +28,14 @@ def health_check(response: Response):
             "status": False,
             "request_count": current_count,
             "server_name": server_name,
+            "user_token": x_user_token,
         }
 
     return {
         "status": True,
         "request_count": current_count,
         "server_name": server_name,
+        "user_token": x_user_token,
     }
 
 
